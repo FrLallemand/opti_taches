@@ -1,7 +1,9 @@
 import generic.AlgorithmeAbstract;
 import generic.Problem;
 import generic.SolutionPartielle;
+import algorithmes.AlgorithmeGreedy;
 import taches.ProblemeTaches;
+import taches.SolutionTaches;
 
 
 public class Main {
@@ -12,6 +14,9 @@ public class Main {
 
 		//creation du probleme
 		Problem probleme=ProblemeTaches.initialiseProblemeSimple();
+		AlgorithmeGreedy greedy =new AlgorithmeGreedy(probleme);
+		SolutionTaches resultat=(SolutionTaches) greedy.meilleureSolution();
+		System.out.println(resultat.afficheJava());
 
 		/*
 		//creation algorithme

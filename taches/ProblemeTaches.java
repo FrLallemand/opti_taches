@@ -5,12 +5,10 @@ import generic.Problem;
 
 public class ProblemeTaches extends Problem {
 
-	boolean[][] affectationTaches;
 	int[][] tempsTaches;
 
 	private ProblemeTaches(int[][] tabTaches){
 		this.tempsTaches = tabTaches;
-		this.affectationTaches = new boolean[tempsTaches.length][tempsTaches[0].length];
 	}
 
 	static public Problem initialiseProblemeSimple() {
@@ -63,7 +61,7 @@ public class ProblemeTaches extends Problem {
 		return (probleme);
 	}
 
-	/**
+		/**
 	 * creation tableau aleatoire
 	 */
 	public static int[][] getTab(int n,int m)
@@ -78,59 +76,6 @@ public class ProblemeTaches extends Problem {
 
 
 
-	/**
-	 * permet d'afficher le tableau sous forme matricielle
-	 */
-	public static String affiche(int[][] tab)
-		{
-			String res="";
-			for (int j=0;j<tab[0].length;j++) {
-				for (int i=0;i<tab.length;i++) {
-					res+=(tab[i][j]+" ");
-				}
-				res+="\n";
-			}
-			return res;
-		}
-
-	/**
-	 * permet d'afficher le tableau sous forme afficheLatex
-	 */
-	public static String afficheLatex(int[][] tab)
-		{
-			String res="$$ \n\\begin{pmatrix}\n";
-			for (int j=0;j<tab[0].length;j++) {
-				res+=tab[0][j];
-				for (int i=1;i<tab.length;i++) {
-					res+=" & " + tab[i][j];
-				}
-				res+="\\\\\n";
-			}
-			res+="\\end{pmatrix} \n$$";
-			return res;
-		}
-
-	/**
-	 * permet d'afficher le tableau sous forme java
-	 */
-	public static String afficheJava(int[][] tab)
-		{
-			String res="int[][] tab={\n";
-			for (int i=0;i<tab.length;i++) {
-				res+="  {";
-				res+=tab[i][0];
-				for (int j=1;j<tab[0].length;j++) {
-					res+=","+tab[i][j];
-				}
-				if (i!=tab.length-1)
-					res+="},\n";
-				else
-					res+="}\n";
-			}
-			res+="}";
-			return res;
-		}
-
 	@Override
 	public SolutionPartielle solutionInitiale() {
 		return new SolutionTaches(this);
@@ -139,7 +84,7 @@ public class ProblemeTaches extends Problem {
 	@Override
 	public double evaluer(SolutionPartielle s) {
 		// on retourne simplement la valeur stockee
-		return (((SolutionTaches) (s)).valeurActuelle);
+		return (((SolutionTaches) (s)).tacheAAffecter);
 	}
 
 
