@@ -12,7 +12,7 @@ public class SolutionTaches extends SolutionPartielle {
 	int tacheAAffecter;
 	int[] tempsTotaux;
 	int tempsMax;
-
+	int plusLongueTache;
 
 	public SolutionTaches(ProblemeTaches pb) {
 		this.problemeEnCours = pb;
@@ -25,13 +25,19 @@ public class SolutionTaches extends SolutionPartielle {
 	}
 
 	public SolutionTaches(SolutionTaches origine) {
-		this.affectationTaches = origine.affectationTaches.clone();
 		this.nbTaches = origine.nbTaches;
 		this.nbPersonnes = origine.nbPersonnes;
 		this.problemeEnCours = origine.problemeEnCours;
 		this.tempsMax = origine.tempsMax;
-		this.tempsTotaux = origine.tempsTotaux;
+		this.tempsTotaux = origine.tempsTotaux.clone();
 		this.tacheAAffecter = origine.tacheAAffecter;
+
+		this.affectationTaches = new boolean[this.nbPersonnes][this.nbTaches];
+		for(int i = 0; i < nbPersonnes; i++){
+			for(int j = 0; j < nbTaches; j++){
+				this.affectationTaches[i][j] = origine.affectationTaches[i][j];
+			}
+		}
 	}
 
 	@Override
@@ -51,12 +57,16 @@ public class SolutionTaches extends SolutionPartielle {
 		for(int i=0; i<nbPersonnes; i++){
 			SolutionTaches solutionPris = new SolutionTaches(this);
 			solutionPris.prendre(i);
+
 			resultat[i] = solutionPris;
-			if(this.tacheAAffecter > 0){
+		}
+
+		if(this.tacheAAffecter > 0){
+			for(int i = 0; i < nbPersonnes; i++){
 				if(this.affectationTaches[i][this.tacheAAffecter-1]){
-					SolutionTaches solutionNonPris = new SolutionTaches(this);
-					solutionNonPris.nePasPrendre(i);
-					resultat[nbPersonnes] = solutionNonPris;
+					SolutionTaches pasPris = new SolutionTaches(this);
+					pasPris.nePasPrendre(i);
+					resultat[nbPersonnes] = pasPris;
 				}
 			}
 		}
@@ -64,7 +74,7 @@ public class SolutionTaches extends SolutionPartielle {
 		return resultat;
 	}
 
-	private void prendre(int personne){
+	public void prendre(int personne){
 		this.affectationTaches[personne][this.tacheAAffecter] = true;
 		this.tempsTotaux[personne] += this.problemeEnCours.tempsTaches[personne][this.tacheAAffecter];
 		this.calculeTempsMax();
@@ -72,11 +82,11 @@ public class SolutionTaches extends SolutionPartielle {
 	}
 
 
-	private void nePasPrendre(int personne){
+	public void nePasPrendre(int personne){
 		this.tacheAAffecter--;
 		this.affectationTaches[personne][this.tacheAAffecter] = false;
 
-		this.tempsTotaux[personne] += this.problemeEnCours.tempsTaches[personne][this.tacheAAffecter];
+		this.tempsTotaux[personne] -= this.problemeEnCours.tempsTaches[personne][this.tacheAAffecter];
 		this.calculeTempsMax();
 	}
 
@@ -90,6 +100,35 @@ public class SolutionTaches extends SolutionPartielle {
 		}
 
 		this.tempsMax = max;
+	}
+
+	public int tempsMaxAffectable(){
+		int[] tempsTotauxMax = this.tempsTotaux.clone();
+
+		for(int tache = tacheAAffecter; tache < nbTaches; tache++){
+			int tpsMax = -1;
+			int personneMax = 0;
+
+			for(int personne = 0; personne < nbPersonnes; personne++){
+				if(this.problemeEnCours.tempsTaches[personne][tache] > tpsMax){
+					tpsMax = this.problemeEnCours.tempsTaches[personne][tache];
+					personneMax = personne;
+				}
+			}
+
+			tempsTotauxMax[personneMax] += tpsMax;
+		}
+
+		int max = 0;
+
+		for (int i = 0; i < nbPersonnes;  i++) {
+			int val = tempsTotauxMax[i];
+			if(val > max){
+				max = val;
+			}
+		}
+
+		return max;
 	}
 
 	@Override
@@ -117,6 +156,23 @@ public class SolutionTaches extends SolutionPartielle {
 			}
 			return res;
 		}
+
+	/**
+	* permet d'afficher le tableau sous forme "personne" prend "liste d'objets"
+	*/
+	public void afficheListe(){
+		for(int i = 0; i < this.nbPersonnes; i++){
+			System.out.printf("La personne %d prend les tâches : ", i + 1);
+			for(int j = 0; j < nbTaches; j++){
+				if(affectationTaches[i][j]){
+					System.out.printf("%d ", j + 1);
+				}
+			}
+			System.out.println("");
+		}
+
+		System.out.println("");
+	}
 
 	/**
 	 * permet d'afficher le tableau sous forme afficheLatex

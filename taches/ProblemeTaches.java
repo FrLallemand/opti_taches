@@ -83,8 +83,10 @@ public class ProblemeTaches extends Problem {
 
 	@Override
 	public double evaluer(SolutionPartielle s) {
-		// on retourne simplement la valeur stockee
-		return (((SolutionTaches) (s)).tacheAAffecter);
+		// On prend en compte à la fois le temps de fin courant
+		// et le nombre de tâches encore à affecter
+		SolutionTaches s_tache = (SolutionTaches) s;
+		return s_tache.tempsMaxAffectable();
 	}
 
 
