@@ -21,6 +21,6 @@ public class Main {
 
 		RecuitSimule recuitSimule = new RecuitSimule(probleme, 1000, 10000);
 		SolutionTaches resultat = (SolutionTaches) recuitSimule.meilleureSolution();
-		resultat.afficheListe();
+		resultat.afficheDiagramme();
 	}
 }

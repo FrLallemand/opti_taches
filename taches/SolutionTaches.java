@@ -2,6 +2,8 @@ package taches;
 import generic.SolutionPartielle;
 import generic.Problem;
 
+import java.util.ArrayList;
+
 public class SolutionTaches extends SolutionPartielle {
 	boolean[][] affectationTaches;
 
@@ -9,10 +11,10 @@ public class SolutionTaches extends SolutionPartielle {
 	int nbTaches;
 	ProblemeTaches problemeEnCours;
 	int tempsTotal;
-	int tacheAAffecter;
 	int[] tempsTotaux;
 	int tempsMax;
 	int plusLongueTache;
+	boolean[] tachesAffectees;
 
 	public SolutionTaches(ProblemeTaches pb) {
 		this.problemeEnCours = pb;
@@ -21,7 +23,7 @@ public class SolutionTaches extends SolutionPartielle {
 		this.affectationTaches = new boolean[this.nbPersonnes][this.nbTaches];
 		this.tempsTotaux = new int[this.nbPersonnes];
 		this.tempsMax = 0;
-		this.tacheAAffecter = 0;
+		this.tachesAffectees = new boolean[this.nbTaches];
 	}
 
 	public SolutionTaches(SolutionTaches origine) {
@@ -30,7 +32,7 @@ public class SolutionTaches extends SolutionPartielle {
 		this.problemeEnCours = origine.problemeEnCours;
 		this.tempsMax = origine.tempsMax;
 		this.tempsTotaux = origine.tempsTotaux.clone();
-		this.tacheAAffecter = origine.tacheAAffecter;
+		this.tachesAffectees = origine.tachesAffectees.clone();
 
 		this.affectationTaches = new boolean[this.nbPersonnes][this.nbTaches];
 		for(int i = 0; i < nbPersonnes; i++){
@@ -41,7 +43,30 @@ public class SolutionTaches extends SolutionPartielle {
 	}
 
 	@Override
-	public SolutionPartielle[] solutionsVoisines() {
+	public ArrayList<SolutionPartielle> solutionsVoisines() {
+		ArrayList<SolutionPartielle> resultat = new ArrayList<>();
+
+		for (int j = 0; j < nbTaches; j++) {
+			if(tachesAffectees[j]){
+				for(int i = 0; i < nbPersonnes; i++){
+					if(this.affectationTaches[i][j]){
+						SolutionTaches pasPris = new SolutionTaches(this);
+						pasPris.nePasPrendre(i, j);
+
+						resultat.add(pasPris);
+					}
+				}
+			}
+			else{
+				for(int i = 0; i < nbPersonnes; i++){
+					SolutionTaches pris = new SolutionTaches(this);
+					pris.prendre(i, j);
+
+					resultat.add(pris);
+				}
+			}
+		}
+		/* OLD VERSION
 		if (estComplete()) {
 			SolutionPartielle[] resultat = new SolutionPartielle[1];
 
@@ -82,24 +107,26 @@ public class SolutionTaches extends SolutionPartielle {
 				}
 			}
 		}
+		*/
 
 		return resultat;
 	}
 
-	public void prendre(int personne){
-		this.affectationTaches[personne][this.tacheAAffecter] = true;
-		this.tempsTotaux[personne] += this.problemeEnCours.tempsTaches[personne][this.tacheAAffecter];
+	public void prendre(int personne, int tache){
+		this.affectationTaches[personne][tache] = true;
+		this.tempsTotaux[personne] += this.problemeEnCours.tempsTaches[personne][tache];
 		this.calculeTempsMax();
-		this.tacheAAffecter++;
+		this.tachesAffectees[tache] = true;
 	}
 
 
-	public void nePasPrendre(int personne){
-		this.tacheAAffecter--;
-		this.affectationTaches[personne][this.tacheAAffecter] = false;
+	public void nePasPrendre(int personne, int tache){
+		this.affectationTaches[personne][tache] = false;
 
-		this.tempsTotaux[personne] -= this.problemeEnCours.tempsTaches[personne][this.tacheAAffecter];
+		this.tempsTotaux[personne] -= this.problemeEnCours.tempsTaches[personne][tache];
 		this.calculeTempsMax();
+
+		this.tachesAffectees[tache] = false;
 	}
 
 	private void calculeTempsMax(){
@@ -117,6 +144,7 @@ public class SolutionTaches extends SolutionPartielle {
 	public int tempsMaxAffectable(){
 		int[] tempsTotauxMax = this.tempsTotaux.clone();
 
+		/*
 		for(int tache = tacheAAffecter; tache < nbTaches; tache++){
 			int tpsMax = -1;
 			int personneMax = 0;
@@ -129,6 +157,22 @@ public class SolutionTaches extends SolutionPartielle {
 			}
 
 			tempsTotauxMax[personneMax] += tpsMax;
+		}
+		*/
+		for(int tache = 0; tache < this.nbTaches; tache++){
+			if(!tachesAffectees[tache]){
+				int tpsMax = -1;
+				int personneMax = 0;
+
+				for(int personne = 0; personne < nbPersonnes; personne++){
+					if(this.problemeEnCours.tempsTaches[personne][tache] > tpsMax){
+						tpsMax = this.problemeEnCours.tempsTaches[personne][tache];
+						personneMax = personne;
+					}
+				}
+
+				tempsTotauxMax[personneMax] += tpsMax;
+			}
 		}
 
 		int max = 0;
@@ -150,7 +194,13 @@ public class SolutionTaches extends SolutionPartielle {
 
 	@Override
 	public boolean estComplete() {
-		return (this.tacheAAffecter == this.nbTaches);
+		boolean result = true;
+
+		for(boolean tache : this.tachesAffectees){
+			result &= tache;
+		}
+
+		return result;
 	}
 
 
@@ -184,6 +234,22 @@ public class SolutionTaches extends SolutionPartielle {
 		}
 
 		System.out.println("");
+	}
+
+	public void afficheDiagramme(){
+		for(int i = 0; i < this.nbPersonnes; i++){
+			System.out.printf("La personne %d prend les tâches : ", i + 1);
+			for(int j = 0; j < nbTaches; j++){
+				if(affectationTaches[i][j]){
+					for(int k = 0; k < this.problemeEnCours.tempsTaches[i][j]; k++){
+						System.out.print("X");
+					}
+				}
+			}
+			System.out.println("");
+		}
+
+		System.out.println("");		
 	}
 
 	/**

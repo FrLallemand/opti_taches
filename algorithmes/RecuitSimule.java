@@ -6,6 +6,7 @@ import generic.SolutionPartielle;
 
 import java.util.Random;
 import java.lang.Math;
+import java.util.ArrayList;
 
 public class RecuitSimule extends AlgorithmeAbstract {
 	public final double DELTA_TEMPERATURE = 0.99;
@@ -48,11 +49,11 @@ public class RecuitSimule extends AlgorithmeAbstract {
 	}
 
 	public SolutionPartielle solutionHasard(SolutionPartielle s){
-		SolutionPartielle[] voisins = s.solutionsVoisines();
+		ArrayList<SolutionPartielle> voisins = s.solutionsVoisines();
 
 		Random rng = new Random();
 
-		return voisins[rng.nextInt(voisins.length)];
+		return voisins.get(rng.nextInt(voisins.size()));
 	}
 
 	public boolean estAcceptee(SolutionPartielle s, double value){

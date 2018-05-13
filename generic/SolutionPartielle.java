@@ -1,5 +1,7 @@
 package generic;
 
+import java.util.ArrayList;
+
 /**
  * represente une solution en cours de construction
  */
@@ -10,7 +12,7 @@ public abstract class SolutionPartielle {
 	 *
 	 * @return liste des solutions partielles suivantes
 	 */
-	public abstract SolutionPartielle[] solutionsVoisines();
+	public abstract ArrayList<SolutionPartielle> solutionsVoisines();
 
 	/**
 	 * permet de savoir si la solution partielle est valide
