@@ -66,48 +66,6 @@ public class SolutionTaches extends SolutionPartielle {
 				}
 			}
 		}
-		/* OLD VERSION
-		if (estComplete()) {
-			SolutionPartielle[] resultat = new SolutionPartielle[1];
-
-			SolutionTaches pasPris = new SolutionTaches(this);
-
-			for(int i = 0; i < nbPersonnes; i++){
-				if(this.affectationTaches[i][this.tacheAAffecter-1]){
-					pasPris.nePasPrendre(i);
-				}
-			}
-
-			resultat[0] = pasPris;
-
-			return resultat;
-		}
-
-		// construire les solutions
-		SolutionPartielle[] resultat;
-		if(this.tacheAAffecter > 0){
-			resultat = new SolutionPartielle[nbPersonnes+1];
-		} else {
-			resultat = new SolutionPartielle[nbPersonnes];
-		}
-
-		for(int i=0; i<nbPersonnes; i++){
-			SolutionTaches solutionPris = new SolutionTaches(this);
-			solutionPris.prendre(i);
-
-			resultat[i] = solutionPris;
-		}
-
-		if(this.tacheAAffecter > 0){
-			for(int i = 0; i < nbPersonnes; i++){
-				if(this.affectationTaches[i][this.tacheAAffecter-1]){
-					SolutionTaches pasPris = new SolutionTaches(this);
-					pasPris.nePasPrendre(i);
-					resultat[nbPersonnes] = pasPris;
-				}
-			}
-		}
-		*/
 
 		return resultat;
 	}
