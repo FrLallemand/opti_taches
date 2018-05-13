@@ -43,7 +43,19 @@ public class SolutionTaches extends SolutionPartielle {
 	@Override
 	public SolutionPartielle[] solutionsVoisines() {
 		if (estComplete()) {
-			return (new SolutionPartielle[0]);
+			SolutionPartielle[] resultat = new SolutionPartielle[1];
+
+			SolutionTaches pasPris = new SolutionTaches(this);
+
+			for(int i = 0; i < nbPersonnes; i++){
+				if(this.affectationTaches[i][this.tacheAAffecter-1]){
+					pasPris.nePasPrendre(i);
+				}
+			}
+
+			resultat[0] = pasPris;
+
+			return resultat;
 		}
 
 		// construire les solutions
