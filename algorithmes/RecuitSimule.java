@@ -31,10 +31,12 @@ public class RecuitSimule extends AlgorithmeAbstract {
 	*/
 	@Override
 	public SolutionPartielle meilleureSolution() {
+		int nb_eval = 0;
 		SolutionPartielle s = problemeAResoudre.solutionInitiale();
 
 		for(int i = 0; i < nb_iters; i++){
 			SolutionPartielle s_random = this.solutionHasard(s);
+			nb_eval++;
 			double eval_srandom = problemeAResoudre.evaluer(s_random);
 
 			if(estAcceptee(s_random, eval_srandom)){

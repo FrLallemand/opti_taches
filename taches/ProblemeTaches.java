@@ -6,9 +6,12 @@ import generic.Problem;
 public class ProblemeTaches extends Problem {
 
 	int[][] tempsTaches;
+	SolutionTaches s_init;
+	boolean s_init_set;
 
 	private ProblemeTaches(int[][] tabTaches){
 		this.tempsTaches = tabTaches;
+		this.s_init_set = false;
 	}
 
 	static public Problem initialiseProblemeSimple() {
@@ -73,11 +76,18 @@ public class ProblemeTaches extends Problem {
 			return tab;
 		}
 
-
+	public void setSolutionInitiale(SolutionTaches s_init){
+		this.s_init = s_init;
+		this.s_init_set = true;
+	}
 
 
 	@Override
 	public SolutionPartielle solutionInitiale() {
+		if(this.s_init_set){
+			return this.s_init;
+		}
+		
 		return new SolutionTaches(this);
 	}
 

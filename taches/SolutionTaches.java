@@ -3,6 +3,7 @@ import generic.SolutionPartielle;
 import generic.Problem;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SolutionTaches extends SolutionPartielle {
 	boolean[][] affectationTaches;
@@ -100,39 +101,28 @@ public class SolutionTaches extends SolutionPartielle {
 	}
 
 	public int tempsMaxAffectable(){
-		int[] tempsTotauxMax = this.tempsTotaux.clone();
+		//int[] tempsTotauxMax = this.tempsTotaux.clone();
+		int acc = 0;
 
-		/*
-		for(int tache = tacheAAffecter; tache < nbTaches; tache++){
-			int tpsMax = -1;
-			int personneMax = 0;
-
-			for(int personne = 0; personne < nbPersonnes; personne++){
-				if(this.problemeEnCours.tempsTaches[personne][tache] > tpsMax){
-					tpsMax = this.problemeEnCours.tempsTaches[personne][tache];
-					personneMax = personne;
-				}
-			}
-
-			tempsTotauxMax[personneMax] += tpsMax;
-		}
-		*/
 		for(int tache = 0; tache < this.nbTaches; tache++){
 			if(!tachesAffectees[tache]){
 				int tpsMax = -1;
 				int personneMax = 0;
 
 				for(int personne = 0; personne < nbPersonnes; personne++){
-					if(this.problemeEnCours.tempsTaches[personne][tache] > tpsMax){
+					if(this.tempsTotaux[personne] + this.problemeEnCours.tempsTaches[personne][tache] + 1 > tpsMax){
 						tpsMax = this.problemeEnCours.tempsTaches[personne][tache];
 						personneMax = personne;
 					}
 				}
 
-				tempsTotauxMax[personneMax] += tpsMax;
+				acc += tpsMax + 1;
 			}
 		}
 
+		return this.tempsMax + acc;
+
+		/*
 		int max = 0;
 
 		for (int i = 0; i < nbPersonnes;  i++) {
@@ -143,6 +133,29 @@ public class SolutionTaches extends SolutionPartielle {
 		}
 
 		return max;
+		*/
+	}
+
+	public void perturbationUniforme(){
+		for(int tache = 0; tache < this.nbTaches; tache++){
+			// Il y a une probabilité de 1/nbTaches que la tache soit perturbée
+			Random r = new Random();
+			if(r.nextDouble() > (1.0 / this.nbTaches)){
+				// Si un tâche est affectée, on la désaffecte, et inversement
+				if(this.tachesAffectees[tache]){
+					for(int personne = 0; personne < this.nbPersonnes; personne++){
+						if(this.affectationTaches[personne][tache]){
+							this.nePasPrendre(personne, tache);
+						}
+					}
+				}
+				else{
+					int p = r.nextInt(this.nbPersonnes);
+
+					this.prendre(p, tache);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -194,20 +207,41 @@ public class SolutionTaches extends SolutionPartielle {
 		System.out.println("");
 	}
 
+	public void afficheAffectes(){
+		for(int tache = 0; tache < this.nbTaches; tache++){
+			if(this.tachesAffectees[tache]){
+				System.out.printf("%d est affecté\n", tache);
+			}
+			else{
+				System.out.printf("%d n'est pas affecté\n", tache);				
+			}
+		}
+
+		System.out.println("");
+	}
+
+	public void afficheTempsMax(){
+		for(int personne = 0; personne < this.nbPersonnes; personne++){
+			System.out.printf("temps max pour %d : %d\n", personne, this.tempsTotaux[personne]);
+		}
+
+		System.out.println("");
+	}
+
 	public void afficheDiagramme(){
 		for(int i = 0; i < this.nbPersonnes; i++){
-			System.out.printf("La personne %d prend les tâches : ", i + 1);
+			System.out.printf("Personne %d : ", i + 1);
 			for(int j = 0; j < nbTaches; j++){
 				if(affectationTaches[i][j]){
 					for(int k = 0; k < this.problemeEnCours.tempsTaches[i][j]; k++){
-						System.out.print("X");
+						System.out.printf("X", j + 1);
 					}
 				}
 			}
 			System.out.println("");
 		}
 
-		System.out.println("");		
+		System.out.println("" + this.problemeEnCours.evaluer(this) + "\n");
 	}
 
 	/**
